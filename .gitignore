@@ -1,0 +1,5 @@
+# Default ignored files
+*.class
+target/
+*.iml
+.idea
