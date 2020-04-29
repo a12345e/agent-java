@@ -29,13 +29,13 @@ public class Actor {
     void mark(String  domain, String operation, byte propertyData[],
               String classFullName, String method, int lineNumber){
             Node node = new Node(domain,operation,classFullName,method,lineNumber,propertyChainBox);
-            String key = node.getKey();
-            Node found =  mapKey2Node.get(key);
+            String target = node.getKey();
+            Node found =  mapKey2Node.get(target);
             if(found  == null){
                 found = node;
-                mapKey2Node.put(key,found);
+                mapKey2Node.put(target,found);
             }
-            lastNode.visit(key,threadStep++,propertyData);
+            lastNode.visit(target,threadStep++,propertyData);
             lastNode = found;
     }
 }

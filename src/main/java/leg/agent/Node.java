@@ -33,11 +33,11 @@ public class Node {
 
     }
 
-    public void visit(String key,long step,byte data[]){
-        Edge edge = maptTarget2Edge.get(key);
+    public void visit(String target,long step,byte data[]){
+        Edge edge = maptTarget2Edge.get(target);
         if(edge == null) {
-            edge = new Edge(key,propertyChainBox);
-            maptTarget2Edge.put(key,edge);
+            edge = new Edge(target,propertyChainBox);
+            maptTarget2Edge.put(target,edge);
         }
         edge.visit(step,data);
     }
