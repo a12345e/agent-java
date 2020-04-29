@@ -45,65 +45,78 @@ public class Edge {
         }
     }
     public class Statistics {
-        public long first = 0;
-        public long last = 0;
-        public long visits = 0;
-        public long lastThreadStep = 0;
-        public long firstThreadStep = 0;
-        public byte lastPropertyData[] = null;
-
-        public Statistics() {
+        public class Snapshot {
+            long time;
+            long step;
+            byte[] data;
+            long visit;
+            public Snapshot(Snapshot other){
+                this.time = other.time;
+                this.step = other.step;
+                this.data = (other.data == null) ? null : other.data.clone();
+                this.visit = other.visit;
+            }
+            public Snapshot() {
+                time = 0;
+                step = 0;
+                visit = 0;
+                data = null;
+            }
         }
-
+        public Statistics.Snapshot first;
+        public  Statistics.Snapshot last;
+        public Statistics() {
+            this.first = new Snapshot();
+            this.last = new Snapshot();
+        }
         public Statistics(final Statistics other) {
-            this.first = other.first;
-            this.last = other.last;
-            this.visits = other.visits;
-            this.lastThreadStep = other.lastThreadStep;
-            this.firstThreadStep = other.firstThreadStep;
-            this.lastPropertyData = (other.lastPropertyData == null) ? null : other.lastPropertyData.clone();
+            this.first = new Snapshot(other.first);
+            this.last = new Snapshot(other.last);
         }
     }
 
 
     public final class  VisitEvent{
         final long time;
-        final long threadStep;
-        final byte propertyData[];
+        final long step;
+        final long visit;
+        final byte data[];
 
-        public VisitEvent(long time, long threadStep, byte propertyData[]) {
-            this.threadStep = threadStep;
+        public VisitEvent(long time, long step, long visit, byte data[]) {
+            this.step = step;
             this.time = time;
-            this.propertyData = propertyData;
+            this.visit = visit;
+            this.data = (data != null) ? data.clone(): null;
         }
 
         public VisitEvent(final VisitEvent other) {
-            this.threadStep = other.threadStep;
+            this.step = other.step;
             this.time = other.time;
-            this.propertyData = other.propertyData.clone();
+            this.visit = other.visit;
+            this.data = (other.data != null ) ? other.data.clone():null;
         }
     }
 
 
-    public void visit(long threadStep, final byte propertyData[])
+    public void visit(long threadStep, final byte data[])
     {
         synchronized (historyLock) {
-            statistics.visits++;
-            statistics.last = System.nanoTime();
-            if(statistics.first == 0){
-                statistics.first = statistics.last;
+            statistics.last.visit++;
+            statistics.last.time = System.nanoTime();
+            statistics.last.step =threadStep;
+            statistics.last.data = (data != null) ? data.clone(): null;
+            if(statistics.last.visit == 1){
+                statistics.first.data = statistics.last.data;
+                statistics.first.time = statistics.last.time;
+                statistics.first.step = statistics.last.step;
+                statistics.first.visit = statistics.last.visit;
             }
-            statistics.lastThreadStep = threadStep;
-            if(statistics.firstThreadStep == 0){
-                statistics.firstThreadStep = threadStep;
-            }
-            statistics.lastPropertyData = propertyData.clone();
             int prefixLimit = properties.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit);
             int suffixLimit = properties.getInt(PropertyChainBox.Property.HistorySuffixLogLimit);
             if (historyPrefix.size() < prefixLimit) {
-                historyPrefix.add(new VisitEvent(statistics.last, statistics.lastThreadStep, propertyData));
+                historyPrefix.add(new VisitEvent(statistics.last.time, statistics.last.step,statistics.last.visit, data));
             } else {
-                historyPrefix.add(new VisitEvent(statistics.last, statistics.lastThreadStep, propertyData));
+                historyPrefix.add(new VisitEvent(statistics.last.time, statistics.last.step, statistics.last.visit, statistics.last.data));
                 if (historySuffix.size() > suffixLimit) {
                     historySuffix.removeFirst();
                 }
@@ -114,12 +127,16 @@ public class Edge {
         synchronized (historyLock) {
             historyPrefix.clear();
             historySuffix.clear();
-            this.statistics.lastPropertyData = null;
-            this.statistics.last = 0;
-            this.statistics.lastThreadStep=0;
-            this.statistics.firstThreadStep=0;
-            this.statistics.first = 0;
-            this.statistics.last= 0;
+
+            this.statistics.last.data=null;
+            this.statistics.last.time = 0;
+            this.statistics.last.step=0;
+            this.statistics.last.visit=0;
+
+            this.statistics.first.data=null;
+            this.statistics.first.time = 0;
+            this.statistics.first.step = 0;
+            this.statistics.first.visit = 0;
         }
 
     }
