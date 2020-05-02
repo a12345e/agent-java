@@ -13,7 +13,13 @@ public class PropertyChainBox {
     private final Set<PropertyChainBox> children;
     private final Map<Property,Object> properties;
     private final void setInt(Property property,Properties externalProperties){
-        String value = (String) externalProperties.getOrDefault(property.name(),"0");
+        String value;
+        if(externalProperties != null){
+            value = (String) externalProperties.getOrDefault(property.name(),"0");
+        }else {
+            value = (String) "0";
+        }
+
         set(property, Integer.valueOf(value));
     }
     PropertyChainBox(PropertyChainBox parent,Properties properties){

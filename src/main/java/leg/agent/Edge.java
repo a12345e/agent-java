@@ -8,8 +8,8 @@ public class Edge {
     public final String target;
     final Object historyLock;
     final PropertyChainBox properties;
-    final LinkedList<VisitEvent> historyPrefix;
-    final LinkedList<VisitEvent> historySuffix;
+    LinkedList<VisitEvent> historyPrefix;
+    LinkedList<VisitEvent> historySuffix;
     Statistics statistics;
     int historyPrefixLimit;
     int historySuffixLimit;
@@ -24,13 +24,15 @@ public class Edge {
         historySuffixLimit = 0;
     }
     public final class Snapshot {
-        private final Statistics statistics;
-        private final VisitEvent historyPrefix[];
-        private final VisitEvent historySuffix[];
+        public final Statistics statistics;
+        public final VisitEvent historyPrefix[];
+        public final VisitEvent historySuffix[];
         private Snapshot(Statistics st, List<VisitEvent> prefix, List<VisitEvent> suffix){
             this.statistics = new Statistics(st);
-            this.historyPrefix = prefix.toArray(new VisitEvent[0]);
-            this.historySuffix = suffix.toArray(new VisitEvent[0]);
+            this.historyPrefix = new VisitEvent[prefix.size()];
+            this.historySuffix = new VisitEvent[suffix.size()];
+            prefix.toArray (historyPrefix);
+            suffix.toArray(historySuffix);
         }
     }
     public final Statistics getStatistics() {
@@ -116,35 +118,24 @@ public class Edge {
             if (historyPrefix.size() < prefixLimit) {
                 historyPrefix.add(new VisitEvent(statistics.last.time, statistics.last.step,statistics.last.visit, data));
             } else {
-                historyPrefix.add(new VisitEvent(statistics.last.time, statistics.last.step, statistics.last.visit, statistics.last.data));
+                historySuffix.add(new VisitEvent(statistics.last.time, statistics.last.step, statistics.last.visit, statistics.last.data));
                 if (historySuffix.size() > suffixLimit) {
                     historySuffix.removeFirst();
                 }
             }
         }
     }
-    public void resetHistoryAndStatistics() {
-        synchronized (historyLock) {
-            historyPrefix.clear();
-            historySuffix.clear();
 
-            this.statistics.last.data=null;
-            this.statistics.last.time = 0;
-            this.statistics.last.step=0;
-            this.statistics.last.visit=0;
-
-            this.statistics.first.data=null;
-            this.statistics.first.time = 0;
-            this.statistics.first.step = 0;
-            this.statistics.first.visit = 0;
-        }
-
-    }
     public void resetHistory() {
         synchronized (historyLock) {
-            historyPrefix.clear();
-            historySuffix.clear();
+            this.historyPrefix = new LinkedList<>();
+            this.historySuffix = new LinkedList<>();
         }
+    }
+    public void resetStatistics() {
+            synchronized (historyLock) {
+                statistics = new Statistics();
+            }
     }
 }
 
