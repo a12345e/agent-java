@@ -14,6 +14,8 @@ public class Node {
     final String className;
     final String method;
     final int lineNumber;
+
+
     final PropertyChainBox propertyChainBox;
     Map<String,Edge> maptTarget2Edge = new HashMap<String,Edge>();
 
@@ -74,13 +76,22 @@ public class Node {
         return result;
     }
 
-    public String getKey(){
+    final public String getKey(){
+        return getKey(this.domain,this.operation,this.className,this.method,this.lineNumber);
+    }
+    final static public String getKey(
+            String domain,
+            String operation,
+            String className,
+            String method,
+            int lineNumber)
+    {
         StringBuilder buf = new StringBuilder();
         buf.append(domain).append('#');
         buf.append(operation).append('#');
         buf.append(className).append('#');
         buf.append(method).append('#');
-        buf.append(lineNumber).append('#');
+        buf.append(lineNumber);
         String key = buf.toString();
         return sha1(key);
     }

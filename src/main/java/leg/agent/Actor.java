@@ -29,7 +29,7 @@ public class Actor {
     void mark(String  domain, String operation, byte propertyData[],
               String classFullName, String method, int lineNumber){
             Node node = new Node(domain,operation,classFullName,method,lineNumber,propertyChainBox);
-            String target = node.getKey();
+            String target = Node.getKey(domain,operation,classFullName,method,lineNumber);
             Node found =  mapKey2Node.get(target);
             if(found  == null){
                 found = node;
