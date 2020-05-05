@@ -1,5 +1,6 @@
 package leg.agent;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,6 +11,12 @@ public class Actor {
     private Node lastNode;
     private Map<String,Node> mapKey2Node = new HashMap<String,Node>();
     private static Map<Long,Actor> mapThread2Actor = new ConcurrentHashMap<Long,Actor>();
+    public Map<String, Node> getMapKey2Node(){
+        return  Collections.unmodifiableMap(mapKey2Node);
+    }
+    public Map<Long, Actor> getMapThread2Actor(){
+        return  Collections.unmodifiableMap(mapThread2Actor);
+    }
     private PropertyChainBox propertyChainBox;
     private Actor(PropertyChainBox parentProperties){
         propertyChainBox = new PropertyChainBox(parentProperties);
@@ -26,7 +33,7 @@ public class Actor {
             }
             return actor;
     }
-    void mark(String  domain, String operation, byte propertyData[],
+    void mark(String  domain, String operation, byte data[],
               String classFullName, String method, int lineNumber){
             Node node = new Node(domain,operation,classFullName,method,lineNumber,propertyChainBox);
             String target = Node.getKey(domain,operation,classFullName,method,lineNumber);
@@ -35,7 +42,7 @@ public class Actor {
                 found = node;
                 mapKey2Node.put(target,found);
             }
-            lastNode.visit(target,threadStep++,propertyData);
+            lastNode.visit(target,threadStep++,data);
             lastNode = found;
     }
 }
