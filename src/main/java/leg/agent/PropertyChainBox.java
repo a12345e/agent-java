@@ -3,6 +3,10 @@ package leg.agent;
 
 import java.util.*;
 
+/**
+ * Each node has its own properties or it inherits properties from its parent
+ *
+ */
 public class PropertyChainBox {
     public enum Property {
         HistoryPrefixLogLimit,
@@ -40,9 +44,7 @@ public class PropertyChainBox {
     private void  removeChild(PropertyChainBox p){
         children.remove(p);
     }
-    public int
-
-    getInt(Property name){
+    public int  getInt(Property name){
         Object  o = get(name);
         if(o == null){
             return 0;

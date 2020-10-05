@@ -30,21 +30,20 @@ public class LEgApi {
         };
     }
 
-    public  static  void mark(String  domain,String operation,byte propertyData[]){
+    public  static  void mark(String  domain,String event,byte propertyData[]){
         Actor actor = Actor.getCreateCurrentActor(propertyChainBox);
         /**
          *   void mark(String  domain,
-         *   String operation,byte propertyData[],
+         *   String event,byte propertyData[],
          *   String classFullName,
          *   String method,
          *   int lineNumber){
          *
          */
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
-        String fileName= Thread.currentThread().getStackTrace()[2].getFileName();
         String className = Thread.currentThread().getStackTrace()[2].getClassName();
         String method = Thread.currentThread().getStackTrace()[2].getMethodName();
-        actor.mark(domain,operation,propertyData,className,method,lineNumber);
+        actor.mark(domain,event,propertyData,className,method,lineNumber);
     }
 
 

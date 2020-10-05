@@ -1,12 +1,13 @@
 package leg.agent;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class Node {
     final String domain;
@@ -15,8 +16,7 @@ public class Node {
     final String method;
     final int lineNumber;
 
-
-    final PropertyChainBox propertyChainBox;
+    final transient PropertyChainBox propertyChainBox;
     Map<String,Edge> maptTarget2Edge = new HashMap<String,Edge>();
 
     public Node(String domain,
@@ -41,7 +41,7 @@ public class Node {
             edge = new Edge(target,propertyChainBox);
             maptTarget2Edge.put(target,edge);
         }
-        edge.visit(step,data);
+        edge.getHistory().visit(step,data);
     }
 
     private static String sha1(String value)

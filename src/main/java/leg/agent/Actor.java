@@ -14,10 +14,10 @@ public class Actor {
     public Map<String, Node> getMapKey2Node(){
         return  Collections.unmodifiableMap(mapKey2Node);
     }
-    public Map<Long, Actor> getMapThread2Actor(){
+    static final public Map<Long, Actor> getMapThread2Actor(){
         return  Collections.unmodifiableMap(mapThread2Actor);
     }
-    private PropertyChainBox propertyChainBox;
+    private transient PropertyChainBox propertyChainBox;
     private Actor(PropertyChainBox parentProperties){
         propertyChainBox = new PropertyChainBox(parentProperties);
         rootNode = lastNode = new Node("","","","",0,propertyChainBox);
@@ -29,17 +29,23 @@ public class Actor {
             Actor actor = mapThread2Actor.get(id);
             if(actor  == null){
                 actor = new Actor(parentProperties);
+                // need enhancement to find when thread dies and not keep to much data of old threads
+                // We can limit the number of active actors and remove olds ones by LRU
+                // Can put thread local storage for making id unique against reuse of thread ids
+                // dso we know that a thread is actually new if has not our thread local data
                 mapThread2Actor.put(id,actor);
             }
             return actor;
     }
-    void mark(String  domain, String operation, byte data[],
+
+    void mark(String  domain, String event, byte data[],
               String classFullName, String method, int lineNumber){
-            Node node = new Node(domain,operation,classFullName,method,lineNumber,propertyChainBox);
-            String target = Node.getKey(domain,operation,classFullName,method,lineNumber);
+            String target = Node.getKey(domain,event,classFullName,method,lineNumber);
             Node found =  mapKey2Node.get(target);
             if(found  == null){
-                found = node;
+                found =  new Node(domain,event,classFullName,method,lineNumber,propertyChainBox);
+
+
                 mapKey2Node.put(target,found);
             }
             lastNode.visit(target,threadStep++,data);
