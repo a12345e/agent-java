@@ -40,10 +40,13 @@ public class LEgApi {
          *   int lineNumber){
          *
          */
+
         int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
         String className = Thread.currentThread().getStackTrace()[2].getClassName();
         String method = Thread.currentThread().getStackTrace()[2].getMethodName();
-        actor.mark(domain,event,propertyData,className,method,lineNumber);
+        long time = System.nanoTime();
+        EventComputedDetails eventComputedDetails = new EventComputedDetails(lineNumber,className,method,time);
+        actor.mark(domain,event,propertyData,eventComputedDetails);
     }
 
 

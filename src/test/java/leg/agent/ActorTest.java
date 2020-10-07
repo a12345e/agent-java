@@ -14,15 +14,15 @@ public class ActorTest {
         Assert.assertEquals(0,mapKey2Node.size());
 
         for(int i=0; i < 10; i++ ) {
-            actor.mark("domain1", "operation1", null, "com.software.BestClass1", "method1", 1);
-            actor.mark("domain1", "operation2", null, "com.software.BestClass1", "method2", 2);
-            actor.mark("domain1", "operation3", null, "com.software.BestClass1", "method3", 3);
-            actor.mark("domain1", "operation4", null, "com.software.BestClass1", "method4", 4);
+            actor.mark("domain1", "operation1",null,new EventComputedDetails(1,"com.software.BestClass1","method1",10));
+            actor.mark("domain1", "operation2", null, new EventComputedDetails(2,"com.software.BestClass1","method2",11));
+            actor.mark("domain1", "operation3", null, new EventComputedDetails(3,"com.software.BestClass1","method3",12));
+            actor.mark("domain1", "operation4", null, new EventComputedDetails(4,"com.software.BestClass1","method4",13));
 
-            actor.mark("domain2", "operation1", null, "com.software.BestClass2", "method1", 1);
-            actor.mark("domain2", "operation2", null, "com.software.BestClass2", "method2", 2);
-            actor.mark("domain2", "operation3", null, "com.software.BestClass2", "method3", 3);
-            actor.mark("domain2", "operation4", null, "com.software.BestClass2", "method4", 4);
+            actor.mark("domain2", "operation1",null,new EventComputedDetails(1,"com.software.BestClass2","method1",10));
+            actor.mark("domain2", "operation2", null, new EventComputedDetails(2,"com.software.BestClass2","method2",11));
+            actor.mark("domain2", "operation3", null, new EventComputedDetails(3,"com.software.BestClass2","method3",12));
+            actor.mark("domain2", "operation4", null, new EventComputedDetails(4,"com.software.BestClass2","method4",13));
         }
         Assert.assertEquals(8,mapKey2Node.size());
         Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1)));
@@ -46,8 +46,8 @@ public class ActorTest {
         mapKey2Node.get(Node.getKey("domain1", "operation4", "com.software.BestClass1", "method4", 4)).maptTarget2Edge.values().iterator().next().target.equals(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1));
 
 
-        actor.mark("domain1", "operation1", null, "com.software.BestClass1", "method1", 1);
-        actor.mark("domain2", "operation1", null, "com.software.BestClass2", "method1", 1);
+        actor.mark("domain1", "operation1", null, new EventComputedDetails(1,"com.software.BestClass1","method1",20));
+        actor.mark("domain2", "operation1", null, new EventComputedDetails(1,"com.software.BestClass2","method1",21));
 
         Assert.assertEquals(2,mapKey2Node.get(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1)).maptTarget2Edge.size());
         Node node1 = mapKey2Node.get(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1));

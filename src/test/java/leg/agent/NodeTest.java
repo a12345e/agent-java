@@ -14,13 +14,13 @@ public class NodeTest {
 
         for(int i = 0; i < 10; i++){
             if(i % 2 == 0){
-                node1.visit(node2.getKey(),i*10,null);
-                node2.visit(node3.getKey(),i*10,null);
+                node1.visit(node2.getKey(),i*10,10+2*i,null);
+                node2.visit(node3.getKey(),i*10,10+2*i,null);
             }else {
-                node1.visit(node3.getKey(),i*10,null);
+                node1.visit(node3.getKey(),i*10,10+2*i,null);
             }
-            node3.visit(node4.getKey(),i*10,null);
-            node4.visit(node1.getKey(),i*10,null);
+            node3.visit(node4.getKey(),i*10,i*10,null);
+            node4.visit(node1.getKey(),i*10,i*10,null);
         }
         Assert.assertEquals(2,node1.maptTarget2Edge.values().size());
         Edge e[] = node1.maptTarget2Edge.values().toArray(new Edge[0]);

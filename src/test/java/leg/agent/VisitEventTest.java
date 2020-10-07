@@ -23,7 +23,7 @@ public class VisitEventTest extends SetupTest{
     @Test
     public void firstCreatedVisitTest() throws IOException {
         Gson gson = new Gson();
-        VisitEvent ev = new VisitEvent(null,10,  new byte []{1,2,3,(byte)255});
+        VisitEvent ev = new VisitEvent(null,10,  0,new byte []{1,2,3,(byte)255});
         JsonElement aa = gson.toJsonTree(ev);
         JsonElement e = computeExpectedJsonElement();
         Assert.assertEquals(aa, e);
@@ -31,13 +31,13 @@ public class VisitEventTest extends SetupTest{
     @Test
     public void succeedingVisitTest() throws IOException {
         Gson gson = new Gson();
-        VisitEvent ev = new VisitEvent(null, 10,  new byte []{1,2,3,(byte)255});
-        VisitEvent succeedingVisit = new VisitEvent(ev, 10,  new byte []{1,2,3,(byte)255});
-        Assert.assertEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  new byte []{1,2,3,(byte)255})));
-        Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  new byte []{1,2,3})));
-        Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  new byte []{2,2,3,(byte)255})));
-        Assert.assertEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  new byte []{1,2,3,(byte)255})));
-        Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 11,  new byte []{1,2,3,(byte)255})));
+        VisitEvent ev = new VisitEvent(null, 10,  0,new byte []{1,2,3,(byte)255});
+        VisitEvent succeedingVisit = new VisitEvent(ev, 10, 0, new byte []{1,2,3,(byte)255});
+        Assert.assertEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  0,new byte []{1,2,3,(byte)255})));
+        Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10, 0, new byte []{1,2,3})));
+        Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  0,new byte []{2,2,3,(byte)255})));
+        Assert.assertEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  0,new byte []{1,2,3,(byte)255})));
+        Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 11,  0,new byte []{1,2,3,(byte)255})));
     }
 
 }

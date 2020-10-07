@@ -35,13 +35,13 @@ public class Node {
 
     }
 
-    public void visit(String target,long step,byte data[]){
+    public void visit(String target,long step,long time,byte data[]){
         Edge edge = maptTarget2Edge.get(target);
         if(edge == null) {
             edge = new Edge(target,propertyChainBox);
             maptTarget2Edge.put(target,edge);
         }
-        edge.getHistory().visit(step,data);
+        edge.getHistory().visit(step,time,data);
     }
 
     private static String sha1(String value)

@@ -38,17 +38,15 @@ public class Actor {
             return actor;
     }
 
-    void mark(String  domain, String event, byte data[],
-              String classFullName, String method, int lineNumber){
-            String target = Node.getKey(domain,event,classFullName,method,lineNumber);
+    public void mark(String  domain, String event, byte data[],
+              EventComputedDetails eventComputedDetails){
+            String target = Node.getKey(domain,event,eventComputedDetails.className,eventComputedDetails.method,eventComputedDetails.lineNumber);
             Node found =  mapKey2Node.get(target);
             if(found  == null){
-                found =  new Node(domain,event,classFullName,method,lineNumber,propertyChainBox);
-
-
+                found =  new Node(domain,event,eventComputedDetails.className,eventComputedDetails.method,eventComputedDetails.lineNumber,propertyChainBox);
                 mapKey2Node.put(target,found);
             }
-            lastNode.visit(target,threadStep++,data);
+            lastNode.visit(target,threadStep++,eventComputedDetails.time,data);
             lastNode = found;
     }
 }

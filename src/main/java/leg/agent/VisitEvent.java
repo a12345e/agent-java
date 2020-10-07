@@ -15,9 +15,9 @@ public final class VisitEvent {
     public long getTime() { return time;}
     public byte[] getData() { return data;}
 
-    VisitEvent(final VisitEvent from,long step,byte data[]) {
+    VisitEvent(final VisitEvent from,long step,long time,byte data[]) {
         this.step = step;
-        this.time = Time.get();
+        this.time = time;
         if(from != null){
             this.visit = from.visit+1;
         }else {

@@ -30,18 +30,16 @@ public class History implements Visit {
         return last;
     }
     @Override
-    public void visit(long step, byte[] data) {
+    public void visit(long step, long time,byte[] data) {
         synchronized (lock) {
-            last = new VisitEvent( last,step,data);
+            last = new VisitEvent( last,step,time,data);
             if(last.getVisit() == 0){
                 first = last;
-
-
             }
             if (historyPrefix.size() < properties.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit)) {
-                historyPrefix.add(new VisitEvent(last,step,data));
+                historyPrefix.add(new VisitEvent(last,step,time,data));
             } else {
-                historySuffix.add(new VisitEvent(last,step, data));
+                historySuffix.add(new VisitEvent(last,step,time, data));
                 if (historySuffix.size() > properties.getInt(PropertyChainBox.Property.HistorySuffixLogLimit)) {
                     historySuffix.removeFirst();
                 }
