@@ -6,20 +6,20 @@ import java.util.LinkedList;
 
 public class History implements Visit {
     
-    private VisitEvent first;
-    private VisitEvent last;
+    transient private VisitEvent first;
+    transient private VisitEvent last;
     private transient Object lock = new Object();
-    private LinkedList<VisitEvent> historyPrefix = new LinkedList<>();
-    private LinkedList<VisitEvent> historySuffix = new LinkedList<>();
-    PropertyChainBox properties;
+    private LinkedList<VisitEvent> firstEvents = new LinkedList<>();
+    private LinkedList<VisitEvent> lastEvents = new LinkedList<>();
+    transient PropertyChainBox properties;
 
     public History(PropertyChainBox properties){
         this.properties = properties;
     }
     public void clear(){
         synchronized (lock) {
-            historyPrefix = new LinkedList<>();
-            historySuffix = new LinkedList<>();
+            firstEvents = new LinkedList<>();
+            lastEvents = new LinkedList<>();
         }
     }
 
@@ -36,17 +36,17 @@ public class History implements Visit {
             if(last.getVisit() == 0){
                 first = last;
             }
-            if (historyPrefix.size() < properties.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit)) {
-                historyPrefix.add(new VisitEvent(last,step,time,data));
-            } else {
-                historySuffix.add(new VisitEvent(last,step,time, data));
-                if (historySuffix.size() > properties.getInt(PropertyChainBox.Property.HistorySuffixLogLimit)) {
-                    historySuffix.removeFirst();
-                }
+            if (firstEvents.size() < properties.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit)) {
+                firstEvents.add(last);
+            }
+            lastEvents.add(last);
+            if (lastEvents.size() > properties.getInt(PropertyChainBox.Property.HistorySuffixLogLimit)) {
+                  lastEvents.removeFirst();
             }
         }
 
     }
 
-    
+
+
 }

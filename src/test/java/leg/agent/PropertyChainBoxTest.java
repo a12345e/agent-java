@@ -19,7 +19,7 @@ public class PropertyChainBoxTest {
     @Test
     public void PropertiesInheritanceTest() {
         PropertyChainBox pcb = new PropertyChainBox(null,new Properties());
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4);
+        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4,false);
         pcb = new PropertyChainBox(pcb);
         Assert.assertEquals(4,pcb.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));
     }
@@ -27,33 +27,33 @@ public class PropertyChainBoxTest {
     public void PropertiesLocalPrecedenceOverInheritanceTest() {
         Properties prop = new Properties();
         PropertyChainBox pcb = new PropertyChainBox(null,prop);
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4);
+        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4,false);
         pcb = new PropertyChainBox(pcb);
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,5);
+        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,5,false);
         Assert.assertEquals(5,pcb.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));
     }
     @Test
     public void PropertiesMultipleInheritanceTest() {
         Properties prop = new Properties();
         PropertyChainBox pcb = new PropertyChainBox(null,prop);
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4);
+        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4,false);
         PropertyChainBox middle = new PropertyChainBox(pcb);
-        middle.set(PropertyChainBox.Property.HistoryPrefixLogLimit,5);
+        middle.set(PropertyChainBox.Property.HistoryPrefixLogLimit,5,false);
         PropertyChainBox top = new PropertyChainBox(middle);
         Assert.assertEquals(5,top.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));
-        top.set(PropertyChainBox.Property.HistoryPrefixLogLimit,6);
+        top.set(PropertyChainBox.Property.HistoryPrefixLogLimit,6,false);
         Assert.assertEquals(6,top.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));
     }
     @Test
     public void PropertiesRemoveTest() {
         Properties prop = new Properties();
         PropertyChainBox pcb = new PropertyChainBox(null,prop);
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4);
+        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit,4,false);
         PropertyChainBox middle = new PropertyChainBox(pcb);
-        middle.set(PropertyChainBox.Property.HistoryPrefixLogLimit,5);
+        middle.set(PropertyChainBox.Property.HistoryPrefixLogLimit,5,false);
         PropertyChainBox top = new PropertyChainBox(middle);
         Assert.assertEquals(5,top.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));
-        top.set(PropertyChainBox.Property.HistoryPrefixLogLimit,6);
+        top.set(PropertyChainBox.Property.HistoryPrefixLogLimit,6,false);
         Assert.assertEquals(6,top.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));
         top.remove(PropertyChainBox.Property.HistoryPrefixLogLimit);
         Assert.assertEquals(5,top.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit));

@@ -1,5 +1,9 @@
 package leg.agent;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +13,11 @@ public class ActorTest {
 
     @Test
     public void Test(){
-        Actor actor = Actor.getCreateCurrentActor(new PropertyChainBox(null));
+        PropertyChainBox  pcb =new PropertyChainBox(null);
+        Actor actor = Actor.getCreateCurrentActor(pcb);
+        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit, 2);
+        pcb.set(PropertyChainBox.Property.HistorySuffixLogLimit, 2);
+
         Map<String,Node> mapKey2Node = actor.getMapKey2Node();
         Assert.assertEquals(0,mapKey2Node.size());
 
@@ -54,7 +62,13 @@ public class ActorTest {
         Edge e2node21 = node1.maptTarget2Edge.get(Node.getKey("domain2", "operation1", "com.software.BestClass2", "method1", 1));
         e2node21.target.equals((Node.getKey("domain2", "operation1", "com.software.BestClass2", "method1", 1)));
 
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        String jsonOutput = gson.toJson(actor);
+        System.out.print(jsonOutput);
 
 
     }
+
 }

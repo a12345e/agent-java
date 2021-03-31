@@ -10,7 +10,7 @@ public class InitializeTest {
 
     @Test
     public void testLegAgentInit(){
-        GenericSimpleThreadRun t = new GenericSimpleThreadRun(100,1);
+        GenericSimpleThreadRun t = new GenericSimpleThreadRun(100,1,"Adomain");
         Properties prop = new Properties();
         prop.setProperty(PropertyChainBox.Property.HistoryPrefixLogLimit.name(),"4");
         prop.setProperty(PropertyChainBox.Property.HistorySuffixLogLimit.name(),"3");

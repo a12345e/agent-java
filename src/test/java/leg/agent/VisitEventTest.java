@@ -1,6 +1,7 @@
 package leg.agent;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import leg.agent.util.CurrentResource;
@@ -30,7 +31,9 @@ public class VisitEventTest extends SetupTest{
     }
     @Test
     public void succeedingVisitTest() throws IOException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
         VisitEvent ev = new VisitEvent(null, 10,  0,new byte []{1,2,3,(byte)255});
         VisitEvent succeedingVisit = new VisitEvent(ev, 10, 0, new byte []{1,2,3,(byte)255});
         Assert.assertEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  0,new byte []{1,2,3,(byte)255})));
@@ -38,6 +41,10 @@ public class VisitEventTest extends SetupTest{
         Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  0,new byte []{2,2,3,(byte)255})));
         Assert.assertEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 10,  0,new byte []{1,2,3,(byte)255})));
         Assert.assertNotEquals(computeExpectedJsonElement(), gson.toJsonTree(new VisitEvent(ev, 11,  0,new byte []{1,2,3,(byte)255})));
+
+        String jsonOutput = gson.toJson(succeedingVisit);
+        System.out.print(jsonOutput);
+
     }
 
 }

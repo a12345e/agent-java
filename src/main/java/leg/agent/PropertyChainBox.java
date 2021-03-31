@@ -15,20 +15,20 @@ public class PropertyChainBox {
     private final PropertyChainBox parent;
     private final Set<PropertyChainBox> children;
     private final Map<Property,Object> properties;
-    private final void setInt(Property property,Properties externalProperties){
+    private final void setInt(Property property,Properties externalProperties, boolean recursive){
         String value;
         if(externalProperties != null){
-            value = (String) externalProperties.getOrDefault(property.name(),"0");
+            value = (String) externalProperties.getOrDefault(property.name() ,"0");
         }else {
             value = (String) "0";
         }
 
-        set(property, Integer.valueOf(value));
+        set(property, Integer.valueOf(value),recursive);
     }
     PropertyChainBox(PropertyChainBox parent,Properties properties){
         this(parent);
-        setInt(Property.HistoryPrefixLogLimit,properties);
-        setInt(Property.HistorySuffixLogLimit,properties);
+        setInt(Property.HistoryPrefixLogLimit,properties,false);
+        setInt(Property.HistorySuffixLogLimit,properties,false);
     }
     PropertyChainBox(PropertyChainBox parent){
         this.parent = parent;
@@ -68,7 +68,13 @@ public class PropertyChainBox {
         return value;
     }
     public void set(Property name, Object value){
+        set(name,value,false);
+    }
+    public void set(Property name, Object value, boolean recursive){
         properties.put(name,value);
+        if(recursive){
+            children.stream().forEach(x -> x.set(name,value,true));
+        }
     }
     public void remove(Property name, boolean recursive){
         properties.remove(name);

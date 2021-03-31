@@ -1,12 +1,17 @@
 package leg.agent;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class NodeTest {
     PropertyChainBox emtyPropertyBox = new PropertyChainBox(null);
+
     @Test
     public void testNodeEdges(){
+        emtyPropertyBox.set(PropertyChainBox.Property.HistoryPrefixLogLimit, 2);
+        emtyPropertyBox.set(PropertyChainBox.Property.HistorySuffixLogLimit, 2);
         Node node1 = new Node("domain","operation1","className1","method1",1,emtyPropertyBox);
         Node node2 = new Node("domain","operation2","className2","method2",2,emtyPropertyBox);
         Node node3 = new Node("domain","operation3","className3","method3",3,emtyPropertyBox);
@@ -32,5 +37,11 @@ public class NodeTest {
         Assert.assertEquals(node4.getKey(),node3.maptTarget2Edge.values().stream().findFirst().get().target);
         Assert.assertEquals(1,node4.maptTarget2Edge.values().size());
         Assert.assertEquals(node1.getKey(),node4.maptTarget2Edge.values().stream().findFirst().get().target);
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        String jsonOutput = gson.toJson(node1);
+        System.out.print(jsonOutput);
     }
 }

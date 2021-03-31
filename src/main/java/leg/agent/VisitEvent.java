@@ -1,7 +1,7 @@
 package leg.agent;
 
 
-public final class VisitEvent {
+public final class VisitEvent{
     private final long time;
     private final long step;
     private final long visit;
@@ -27,5 +27,6 @@ public final class VisitEvent {
             this.data = data.clone();
         else this.data = null;
     }
+
 
 }
