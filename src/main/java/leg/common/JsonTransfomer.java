@@ -35,9 +35,9 @@ public class JsonTransfomer implements Transformer<ObjectNode>{
                     Optional<JsonNodeType>  type = getArrayType(array);
                     if(type.isPresent()) {
                          if(type.get().equals(JsonNodeType.STRING)){
-                             e.getStringListMap().put(fieldName,get(array, x -> x.asText()));
+                             e.getStringListMap().put(fieldName, jsonArrayToList(array, x -> x.asText()));
                          }else if(type.get().equals(JsonNodeType.OBJECT)){
-                             e.getTransformableListMap().put(fieldName,get(array, x -> deserialize((ObjectNode)x)));
+                             e.getTransformableListMap().put(fieldName, jsonArrayToList(array, x -> deserialize((ObjectNode)x)));
                          }
                     }
                 }
@@ -73,13 +73,13 @@ public class JsonTransfomer implements Transformer<ObjectNode>{
     }
 
 
-    private <E> List<E>  get(ArrayNode array, Function<JsonNode,E> func) {
-        List<E> set = new LinkedList<>();
+    private <E> List<E> jsonArrayToList(ArrayNode array, Function<JsonNode,E> func) {
+        List<E> list = new LinkedList<>();
         for (int i = 0; i < array.size(); i++) {
             JsonNode node = array.get(i);
-            set.add(func.apply(node));
+            list.add(func.apply(node));
         }
-        return set;
+        return list;
     }
     private void addNewKeysAndCheckUniq(Set<String> set, Set<String> newSet, final String className){
         for(String key: newSet){
