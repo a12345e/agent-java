@@ -18,6 +18,8 @@ public class TestJsonSerialization {
         e.getStringMap().put("s2","value-s2");
 
         e.getLongMap().put("l1",10L);
+
+
         e.getLongMap().put("l2",11L);
 
         e.getStringListMap().put("sl1",Arrays.asList("s1","s2"));

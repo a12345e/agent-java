@@ -10,26 +10,40 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-public class JsonTransfomer implements Transformer<ObjectNode> {
+public class JsonTransfomer implements Transformer<ObjectNode>{
 
 
-    public static final String STRINGS = "strings";
-    public static final String BOOLEANS = "booleans";
-    public static final String LONGS = "longs";
-    public static final String TRANSFORMABLES = "transformables";
-    public static final String STRINGLISTS = "stringlists";
-    public static final String TRANSFORMABLELISTS = "transformablelists";
 
     @Override
     public Transformable deserialize(ObjectNode jsonObject) {
-        CanonizedTransformableElement e = new CanonizedTransformableElement();
-        deserializeStrings(jsonObject,e);
-        deserializeStringLists(jsonObject,e);
-        deserializeBooleans(jsonObject,e);
-        deserializeLongs(jsonObject,e);
-        deserializeTransformables(jsonObject,e);
-        deserializeTransformableLists(jsonObject,e);
-        return e;
+            CanonizedTransformableElement e = new CanonizedTransformableElement();
+            Iterator<String> fieldNames = jsonObject.fieldNames();
+            Map<String,String> mapKeyUsage = new HashMap<>();
+            while(fieldNames.hasNext()) {
+                String fieldName = fieldNames.next();
+                JsonNode value = jsonObject.get(fieldName);
+                if (value.isTextual()) {
+                    e.stringsMap.put(fieldName, value.asText());
+                } else if (value.isLong()) {
+                    e.longsMap.put(fieldName, value.asLong());
+                } else if (value.isBoolean()) {
+                    e.booleansMap.put(fieldName, value.asBoolean());
+                }else if(value.isObject()){
+                    e.transformablesMap.put(fieldName,deserialize((ObjectNode)value));
+                }else if(value.isArray()) {
+                    ArrayNode array = (ArrayNode) value;
+                    Optional<JsonNodeType>  type = getArrayType(array);
+                    if(type.isPresent()) {
+                         if(type.get().equals(JsonNodeType.STRING)){
+                             e.getStringListMap().put(fieldName,get(array, x -> x.asText()));
+                         }else if(type.get().equals(JsonNodeType.OBJECT)){
+                             e.getTransformableListMap().put(fieldName,get(array, x -> deserialize((ObjectNode)x)));
+                         }
+                    }
+                }
+            }
+            return e;
+
     }
 
 
@@ -44,104 +58,10 @@ public class JsonTransfomer implements Transformer<ObjectNode> {
 
     }
 
-    private void deserializeStrings(ObjectNode o, Transformable e){
-        ObjectNode node = (ObjectNode) o.get(STRINGS);
-        Iterator<String> fieldNames = node.fieldNames();
-        while(fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode value = node.get(fieldName);
-            if(value.isTextual()){
-                e.getStringMap().put(fieldName, value.asText());
-            }else {
-                throw new RuntimeException("Was expected string type but "+value.getNodeType());
-            }
-        }
-    }
-    private void deserializeBooleans(ObjectNode o,Transformable e){
-        ObjectNode node = (ObjectNode) o.get(BOOLEANS);
-        Iterator<String> fieldNames = node.fieldNames();
-        while(fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode value = node.get(fieldName);
-            if(value.isBoolean()){
-                e.getBooleanMap().put(fieldName, value.asBoolean());
-            }else {
-                throw new RuntimeException("Was expected boolean type but "+value.getNodeType());
-            }
-        }
-    }
-    private void deserializeLongs(ObjectNode o,Transformable e){
-        ObjectNode node = (ObjectNode) o.get(LONGS);
-        Iterator<String> fieldNames = node.fieldNames();
-        while(fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode value = node.get(fieldName);
-            if(value.isIntegralNumber()){
-                e.getLongMap().put(fieldName, value.asLong());
-            }else {
-                throw new RuntimeException("Was expected long type but "+value.getNodeType());
-            }
-        }
-    }
-    private void deserializeTransformables(ObjectNode o, Transformable e){
-        ObjectNode node = (ObjectNode) o.get(TRANSFORMABLES);
-        Iterator<String> fieldNames = node.fieldNames();
-        while(fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode value = node.get(fieldName);
-            if(value.isObject()){
-                e.getTransformableMap().put(fieldName,deserialize((ObjectNode)value));
-            }else {
-                throw new RuntimeException("Was expected Object type but "+value.getNodeType());
-            }
-        }
-    }
-    private void deserializeStringLists(ObjectNode o, Transformable e){
-        ObjectNode node = (ObjectNode) o.get(STRINGLISTS);
-        Iterator<String> fieldNames = node.fieldNames();
-        while(fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode value = node.get(fieldName);
-            if(value.isArray()) {
-                ArrayNode array = (ArrayNode) value;
-                Optional<JsonNodeType>  type = getArrayType(array);
-                if(type.isPresent()) {
-                    if (type.get().equals(JsonNodeType.STRING)) {
-                        e.getStringListMap().put(fieldName, get(array, x -> x.asText()));
-                    }
-                }else {
-                    throw new RuntimeException("Was expected array of strings");
-                }
-            }else {
-                throw new RuntimeException("Was expected Object type but "+value.getNodeType());
-            }
-        }
-    }
-    private void deserializeTransformableLists(ObjectNode o, Transformable e){
-        ObjectNode node = (ObjectNode) o.get(TRANSFORMABLELISTS);
-        Iterator<String> fieldNames = node.fieldNames();
-        while(fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode value = node.get(fieldName);
-            if(value.isArray()) {
-                ArrayNode array = (ArrayNode) value;
-                Optional<JsonNodeType>  type = getArrayType(array);
-                if(type.isPresent()) {
-                    if (type.get().equals(JsonNodeType.OBJECT)) {
-                        e.getTransformableListMap().put(fieldName, get(array, x -> deserialize((ObjectNode)x)));
-                    }
-                }else {
-                    throw new RuntimeException("Was expected array of transformables");
-                }
-            }else {
-                throw new RuntimeException("Was expected Object type but "+value.getNodeType());
-            }
-        }
-    }
-
-
     private Optional<JsonNodeType> getArrayType(ArrayNode array) {
+
         Set<JsonNodeType> types = new HashSet<>();
+
         for(int i = 0; i < array.size(); i++) {
             JsonNode node = array.get(i);
             types.add(node.getNodeType());
@@ -161,29 +81,44 @@ public class JsonTransfomer implements Transformer<ObjectNode> {
         }
         return set;
     }
+    private void addNewKeysAndCheckUniq(Set<String> set, Set<String> newSet, final String className){
+        for(String key: newSet){
+            if(!set.add(key)){
+                throw new RuntimeException("Key "+key+" is used for more than one member of the transformable "+className);
+            }
+        }
+    }
+
+    private void validateKeyUniqeness(Transformable e){
+        Set<String> set = new HashSet<>();
+        String className = e.getClass().getName();
+        addNewKeysAndCheckUniq(set,e.getBooleanMap().keySet(),className);
+        addNewKeysAndCheckUniq(set,e.getStringMap().keySet(),className);
+        addNewKeysAndCheckUniq(set,e.getLongMap().keySet(),className);
+        addNewKeysAndCheckUniq(set,e.getTransformableMap().keySet(),className);
+        addNewKeysAndCheckUniq(set,e.getStringListMap().keySet(),className);
+        addNewKeysAndCheckUniq(set,e.getTransformableListMap().keySet(),className);
+
+    }
+
     private ObjectNode serialize(Transformable e, ObjectNode o) {
-        ObjectNode booleans = o.putObject(BOOLEANS);
-        e.getBooleanMap().entrySet().stream().forEach(entry -> booleans.put(entry.getKey(),entry.getValue()));
-        ObjectNode strings = o.putObject(STRINGS);
-        e.getStringMap().entrySet().stream().forEach(entry -> strings.put(entry.getKey(),entry.getValue()));
-        ObjectNode longs = o.putObject(LONGS);
-        e.getLongMap().entrySet().stream().forEach(entry -> longs.put(entry.getKey(),entry.getValue()));
-        ObjectNode transformables = o.putObject(TRANSFORMABLES);
+        validateKeyUniqeness(e);
+        e.getBooleanMap().entrySet().stream().forEach(entry -> o.put(entry.getKey(),entry.getValue()));
+        e.getStringMap().entrySet().stream().forEach(entry -> o.put(entry.getKey(),entry.getValue()));
+        e.getLongMap().entrySet().stream().forEach(entry -> o.put(entry.getKey(),entry.getValue()));
         e.getTransformableMap().entrySet().stream().forEach(entry -> {
-            serialize(entry.getValue(),transformables.putObject(entry.getKey()));
+            serialize(entry.getValue(),o.putObject(entry.getKey()));
         });
-        ObjectNode stringlists = o.putObject(STRINGLISTS);
         e.getStringListMap().entrySet().stream().forEach(entry ->
         {
-            ArrayNode arrayNode = stringlists.putArray(entry.getKey());
+            ArrayNode arrayNode = o.putArray(entry.getKey());
             for(String s:entry.getValue()){
                 arrayNode.add(s);
             }
         });
-        ObjectNode transformablelists = o.putObject(TRANSFORMABLELISTS);
         e.getTransformableListMap().entrySet().stream().forEach(entry ->
         {
-            ArrayNode arrayNode = transformablelists.putArray(entry.getKey());
+            ArrayNode arrayNode = o.putArray(entry.getKey());
             for(Transformable t:entry.getValue()){
                 arrayNode.add(serialize(t));
             }
