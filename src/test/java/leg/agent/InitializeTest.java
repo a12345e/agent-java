@@ -12,8 +12,8 @@ public class InitializeTest {
     public void testLegAgentInit(){
         GenericSimpleThreadRun t = new GenericSimpleThreadRun(100,1,"Adomain");
         Properties prop = new Properties();
-        prop.setProperty(PropertyChainBox.Property.HistoryPrefixLogLimit.name(),"4");
-        prop.setProperty(PropertyChainBox.Property.HistorySuffixLogLimit.name(),"3");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT.name(),"4");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT.name(),"3");
         StringBuilder buffer = new StringBuilder();
         t.run();
     }

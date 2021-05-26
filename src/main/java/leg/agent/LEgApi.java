@@ -6,12 +6,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LEgApi {
     private static boolean initialized = false;
-    private static PropertyChainBox propertyChainBox = new PropertyChainBox(null);
     private static ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    public static PropertyChainBox getProperties() {
-        return propertyChainBox;
-    }
+
 
     public static void init(Properties properties, StringBuilder errBuilder) {
         try {
@@ -19,7 +16,7 @@ public class LEgApi {
             if (initialized) {
                 errBuilder.append("Already initialized.");
             } else {
-                propertyChainBox = new PropertyChainBox(null, properties);
+                ActorInitProperties.initialize(properties);
                 initialized = true;
             }
         } catch (Throwable t) {
@@ -46,16 +43,16 @@ public class LEgApi {
         }
     }
 
-    public static void mark(String domain, String event, byte propertyData[]) {
+    public static void mark(String domain, String event, byte data[]) {
         try {
             readWriteLock.readLock().lock();
             if (!initialized) {
                 return;
             }
-            Actor actor = Actor.getCreateCurrentActor(propertyChainBox);
+            Actor actor = Actor.getCreateCurrentActor();
             /**
              *   void mark(String  domain,
-             *   String event,byte propertyData[],
+             *   String event,byte data[],
              *   String classFullName,
              *   String method,
              *   int lineNumber){
@@ -64,9 +61,10 @@ public class LEgApi {
             int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
             String className = Thread.currentThread().getStackTrace()[2].getClassName();
             String method = Thread.currentThread().getStackTrace()[2].getMethodName();
+            Thread.currentThread().getStackTrace()[1].
             long time = System.nanoTime();
             EventComputedDetails eventComputedDetails = new EventComputedDetails(lineNumber, className, method, time);
-            actor.mark(domain, event, propertyData, eventComputedDetails);
+            actor.mark(domain, event, data, eventComputedDetails);
         } catch (Throwable t) {
 
         } finally {

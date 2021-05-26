@@ -10,8 +10,8 @@ public class NodeTest {
 
     @Test
     public void testNodeEdges(){
-        emtyPropertyBox.set(PropertyChainBox.Property.HistoryPrefixLogLimit, 2);
-        emtyPropertyBox.set(PropertyChainBox.Property.HistorySuffixLogLimit, 2);
+        emtyPropertyBox.set(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT, 2);
+        emtyPropertyBox.set(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT, 2);
         Node node1 = new Node("domain","operation1","className1","method1",1,emtyPropertyBox);
         Node node2 = new Node("domain","operation2","className2","method2",2,emtyPropertyBox);
         Node node3 = new Node("domain","operation3","className3","method3",3,emtyPropertyBox);
@@ -27,16 +27,16 @@ public class NodeTest {
             node3.visit(node4.getKey(),i*10,i*10,null);
             node4.visit(node1.getKey(),i*10,i*10,null);
         }
-        Assert.assertEquals(2,node1.maptTarget2Edge.values().size());
-        Edge e[] = node1.maptTarget2Edge.values().toArray(new Edge[0]);
+        Assert.assertEquals(2,node1.maptTarget2History.values().size());
+        Edge e[] = node1.maptTarget2History.values().toArray(new Edge[0]);
         Assert.assertEquals(node2.getKey(),e[0].target);
         Assert.assertEquals(node3.getKey(),e[1].target);
-        Assert.assertEquals(1,node2.maptTarget2Edge.values().size());
-        Assert.assertEquals(node3.getKey(),node2.maptTarget2Edge.values().stream().findFirst().get().target);
-        Assert.assertEquals(1,node3.maptTarget2Edge.values().size());
-        Assert.assertEquals(node4.getKey(),node3.maptTarget2Edge.values().stream().findFirst().get().target);
-        Assert.assertEquals(1,node4.maptTarget2Edge.values().size());
-        Assert.assertEquals(node1.getKey(),node4.maptTarget2Edge.values().stream().findFirst().get().target);
+        Assert.assertEquals(1,node2.maptTarget2History.values().size());
+        Assert.assertEquals(node3.getKey(),node2.maptTarget2History.values().stream().findFirst().get().target);
+        Assert.assertEquals(1,node3.maptTarget2History.values().size());
+        Assert.assertEquals(node4.getKey(),node3.maptTarget2History.values().stream().findFirst().get().target);
+        Assert.assertEquals(1,node4.maptTarget2History.values().size());
+        Assert.assertEquals(node1.getKey(),node4.maptTarget2History.values().stream().findFirst().get().target);
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()

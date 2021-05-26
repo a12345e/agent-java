@@ -6,10 +6,8 @@ import leg.agent.sample.basic.GenericSimpleThreadRun;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Modifier;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,8 +17,8 @@ public class ThreadTest {
     @Test
     public void testMainThread(){
         Properties prop = new Properties();
-        prop.setProperty(PropertyChainBox.Property.HistoryPrefixLogLimit.name(),"4");
-        prop.setProperty(PropertyChainBox.Property.HistorySuffixLogLimit.name(),"3");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT.name(),"4");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT.name(),"3");
         StringBuilder buffer = new StringBuilder();
         LEgApi.init(prop,buffer);
         LEgApi.mark("domainA","OperationA",new byte[0]);
@@ -32,8 +30,8 @@ public class ThreadTest {
     @Test
     public void test1ThreadNotMain() throws InterruptedException {
         Properties prop = new Properties();
-        prop.setProperty(PropertyChainBox.Property.HistoryPrefixLogLimit.name(),"4");
-        prop.setProperty(PropertyChainBox.Property.HistorySuffixLogLimit.name(),"3");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT.name(),"4");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT.name(),"3");
         StringBuilder buffer = new StringBuilder();
         LEgApi.init(prop,buffer);
         Thread t = new Thread(new GenericSimpleThreadRun(100,3,"Adomain"));
@@ -55,8 +53,8 @@ public class ThreadTest {
     @Test
     public void testMultiThreadNotMain() throws InterruptedException {
         Properties prop = new Properties();
-        prop.setProperty(PropertyChainBox.Property.HistoryPrefixLogLimit.name(),"4");
-        prop.setProperty(PropertyChainBox.Property.HistorySuffixLogLimit.name(),"3");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT.name(),"4");
+        prop.setProperty(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT.name(),"3");
         StringBuilder buffer = new StringBuilder();
         LEgApi.init(prop,buffer);
         int runs = 5;

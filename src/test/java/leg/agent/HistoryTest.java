@@ -1,13 +1,10 @@
 package leg.agent;
 
 import com.google.gson.*;
-import leg.agent.util.CurrentResource;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 public class HistoryTest extends SetupTest {
@@ -19,8 +16,8 @@ public class HistoryTest extends SetupTest {
     public void historyFirstEvent() throws IOException {
         Gson gson = new Gson();
         PropertyChainBox pcb = new PropertyChainBox(null, new Properties());
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit, 4,false);
-        pcb.set(PropertyChainBox.Property.HistorySuffixLogLimit, 2,false);
+        pcb.set(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT, 4,false);
+        pcb.set(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT, 2,false);
         History history = new History(pcb);
         history.visit(10, 10,new byte[]{1, 2, 3, (byte) 255});
 
@@ -38,8 +35,8 @@ public class HistoryTest extends SetupTest {
     public void historyLastEvent() throws IOException {
         Gson gson = new Gson();
         PropertyChainBox pcb = new PropertyChainBox(null, new Properties());
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit, 4,false);
-        pcb.set(PropertyChainBox.Property.HistorySuffixLogLimit, 2,false);
+        pcb.set(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT, 4,false);
+        pcb.set(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT, 2,false);
         History history = new History(pcb);
         history.visit(10, 10,new byte[]{1, 2, 3, (byte) 255});
         history.visit(11, 11,new byte[]{1, 2, 4, (byte) 255});
@@ -73,8 +70,8 @@ public class HistoryTest extends SetupTest {
                 .setPrettyPrinting()
                 .create();
         PropertyChainBox pcb = new PropertyChainBox(null, new Properties());
-        pcb.set(PropertyChainBox.Property.HistoryPrefixLogLimit, 2);
-        pcb.set(PropertyChainBox.Property.HistorySuffixLogLimit, 2);
+        pcb.set(PropertyChainBox.Property.HISTORY_PREFIX_LOG_LIMIT, 2);
+        pcb.set(PropertyChainBox.Property.HISTORY_SUFFIX_LOG_LIMIT, 2);
         History history = new History(pcb);
         history.visit(10, 1000,new byte[]{1, 2, 1, (byte) 255});
         history.visit(11, 1001,new byte[]{1, 2, 2, (byte) 255});

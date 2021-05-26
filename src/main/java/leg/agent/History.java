@@ -1,20 +1,15 @@
 package leg.agent;
 
-import leg.common.Visit;
-
 import java.util.LinkedList;
 
-public class History implements Visit {
+public class History {
     
-    transient private VisitEvent first;
-    transient private VisitEvent last;
     private transient Object lock = new Object();
     private LinkedList<VisitEvent> firstEvents = new LinkedList<>();
     private LinkedList<VisitEvent> lastEvents = new LinkedList<>();
-    transient PropertyChainBox properties;
+    private long countVisits;
+    public History(){
 
-    public History(PropertyChainBox properties){
-        this.properties = properties;
     }
     public void clear(){
         synchronized (lock) {
@@ -23,30 +18,31 @@ public class History implements Visit {
         }
     }
 
-    public VisitEvent getFirstEvent(){
-        return first;
-    }
-    public VisitEvent getLastEvent(){
-        return last;
-    }
-    @Override
-    public void visit(long step, long time,byte[] data) {
+    public void visit(long step, long time,byte[] data, int keepFirstEvents, int keepLastEvents) {
         synchronized (lock) {
-            last = new VisitEvent( last,step,time,data);
-            if(last.getVisit() == 0){
-                first = last;
+            VisitEvent event = new VisitEvent( step,time,data);
+            if (getFirstEvents().size() < keepFirstEvents){
+                getFirstEvents().add(event);
             }
-            if (firstEvents.size() < properties.getInt(PropertyChainBox.Property.HistoryPrefixLogLimit)) {
-                firstEvents.add(last);
+            getLastEvents().add(event);
+            if (getLastEvents().size() > keepLastEvents) {
+                  getLastEvents().removeFirst();
             }
-            lastEvents.add(last);
-            if (lastEvents.size() > properties.getInt(PropertyChainBox.Property.HistorySuffixLogLimit)) {
-                  lastEvents.removeFirst();
-            }
+            countVisits = getCountVisits() + 1;
         }
 
     }
 
 
+    public LinkedList<VisitEvent> getFirstEvents() {
+        return firstEvents;
+    }
 
+    public LinkedList<VisitEvent> getLastEvents() {
+        return lastEvents;
+    }
+
+    public long getCountVisits() {
+        return countVisits;
+    }
 }
