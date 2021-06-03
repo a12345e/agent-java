@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LEgApi {
     private static boolean initialized = false;
+    private static Properties properties;
     private static ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
 
@@ -16,8 +17,8 @@ public class LEgApi {
             if (initialized) {
                 errBuilder.append("Already initialized.");
             } else {
-                ActorInitProperties.initialize(properties);
                 initialized = true;
+                LEgApi.properties = properties;
             }
         } catch (Throwable t) {
 
@@ -61,7 +62,6 @@ public class LEgApi {
             int lineNumber = Thread.currentThread().getStackTrace()[2].getLineNumber();
             String className = Thread.currentThread().getStackTrace()[2].getClassName();
             String method = Thread.currentThread().getStackTrace()[2].getMethodName();
-            Thread.currentThread().getStackTrace()[1].
             long time = System.nanoTime();
             EventComputedDetails eventComputedDetails = new EventComputedDetails(lineNumber, className, method, time);
             actor.mark(domain, event, data, eventComputedDetails);

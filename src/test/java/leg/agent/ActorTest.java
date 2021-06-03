@@ -28,34 +28,6 @@ public class ActorTest {
             actor.mark("domain2", "operation4", null, new EventComputedDetails(4,"com.software.BestClass2","method4",13));
         }
         Assert.assertEquals(8,mapKey2Node.size());
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1)));
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain1", "operation2", "com.software.BestClass1", "method2", 2)));
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain1", "operation3", "com.software.BestClass1", "method3", 3)));
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain1", "operation4", "com.software.BestClass1", "method4", 4)));
-
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain2", "operation1", "com.software.BestClass2", "method1", 1)));
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain2", "operation2", "com.software.BestClass2", "method2", 2)));
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain2", "operation3", "com.software.BestClass2", "method3", 3)));
-        Assert.assertTrue(mapKey2Node.keySet().contains(Node.getKey("domain2", "operation4", "com.software.BestClass2", "method4", 4)));
-
-        Assert.assertEquals(1,mapKey2Node.get(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1)).maptTarget2History.size());
-        Assert.assertEquals(1,mapKey2Node.get(Node.getKey("domain1", "operation2", "com.software.BestClass1", "method2", 2)).maptTarget2History.size());
-        Assert.assertEquals(1,mapKey2Node.get(Node.getKey("domain1", "operation3", "com.software.BestClass1", "method3", 3)).maptTarget2History.size());
-        Assert.assertEquals(1,mapKey2Node.get(Node.getKey("domain1", "operation4", "com.software.BestClass1", "method4", 4)).maptTarget2History.size());
-
-        mapKey2Node.get(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1)).maptTarget2History.values().iterator().next().target.equals(Node.getKey("domain1", "operation2", "com.software.BestClass1", "method2", 2));
-        mapKey2Node.get(Node.getKey("domain1", "operation2", "com.software.BestClass1", "method2", 2)).maptTarget2History.values().iterator().next().target.equals(Node.getKey("domain1", "operation3", "com.software.BestClass1", "method3", 3));
-        mapKey2Node.get(Node.getKey("domain1", "operation3", "com.software.BestClass1", "method3", 3)).maptTarget2History.values().iterator().next().target.equals(Node.getKey("domain1", "operation4", "com.software.BestClass1", "method4", 4));
-        mapKey2Node.get(Node.getKey("domain1", "operation4", "com.software.BestClass1", "method4", 4)).maptTarget2History.values().iterator().next().target.equals(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1));
-
-
-        actor.mark("domain1", "operation1", null, new EventComputedDetails(1,"com.software.BestClass1","method1",20));
-        actor.mark("domain2", "operation1", null, new EventComputedDetails(1,"com.software.BestClass2","method1",21));
-
-        Assert.assertEquals(2,mapKey2Node.get(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1)).maptTarget2History.size());
-        Node node1 = mapKey2Node.get(Node.getKey("domain1", "operation1", "com.software.BestClass1", "method1", 1));
-        Edge e2node21 = node1.maptTarget2History.get(Node.getKey("domain2", "operation1", "com.software.BestClass2", "method1", 1));
-        e2node21.target.equals((Node.getKey("domain2", "operation1", "com.software.BestClass2", "method1", 1)));
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
